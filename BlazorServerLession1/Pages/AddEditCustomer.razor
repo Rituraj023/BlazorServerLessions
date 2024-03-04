@@ -1,0 +1,98 @@
+﻿@page "/customer/add"
+@page "/customer/edit/{CustomerId:int}"
+@inject CustomerService CustomerService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>@Title</h3>
+
+<EditForm Model="customer" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <InputText id="name" class="form-control" @bind-Value="customer.Name" />
+    </div>
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="customer.Email" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? CustomerId { get; set; }
+
+    private Customer customer = new Customer();
+    private string Title => CustomerId.HasValue ? "Edit Customer" : "Add Customer";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CustomerId.HasValue)
+        {
+            customer = CustomerService.GetCustomerById(CustomerId.Value);
+        }
+    }
+
+    // private void HandleValidSubmit()
+    // {
+    //     if (CustomerId.HasValue)
+    //     {
+    //         CustomerService.UpdateCustomer(customer);
+    //     }
+    //     else
+    //     {
+    //         CustomerService.AddCustomer(customer);
+    //     }
+
+    //     NavigationManager.NavigateTo("/customers");
+    // }
+
+    // private async Task HandleValidSubmit()
+    // {
+    //     var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to save these changes?");
+    //     if (confirmed)
+    //     {
+    //         if (CustomerId.HasValue)
+    //         {
+    //             CustomerService.UpdateCustomer(customer);
+    //             await JSRuntime.InvokeVoidAsync("alert", "Customer updated successfully.");
+    //         }
+    //         else
+    //         {
+    //             CustomerService.AddCustomer(customer);
+    //             await JSRuntime.InvokeVoidAsync("alert", "Customer added successfully.");
+    //         }
+
+    //         NavigationManager.NavigateTo("/customers");
+    //     }
+    //     else
+    //     {
+    //         // Optionally handle the cancellation
+    //         await JSRuntime.InvokeVoidAsync("alert", "Operation cancelled.");
+    //     }
+    // }
+
+    private async Task HandleValidSubmit()
+    {
+        string resultMessage; // To store the result message from AddCustomer or UpdateCustomer
+
+        if (CustomerId.HasValue)
+        {
+            resultMessage = CustomerService.UpdateCustomer(customer); // Capture the return message from UpdateCustomer
+            resultMessage = "Customer updated successfully.";
+        }
+        else
+        {
+            resultMessage = CustomerService.AddCustomer(customer); // Capture the return message
+        }
+
+        // Show the result message as an alert
+        await JSRuntime.InvokeVoidAsync("alert", resultMessage);
+
+        NavigationManager.NavigateTo("/customers");
+    }
+
+}
