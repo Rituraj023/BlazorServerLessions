@@ -1,37 +1,33 @@
-﻿using BlazorServerLession1.Models;
+﻿using BlazorServerLession1.Data;
+using BlazorServerLession1.Models;
 
 namespace BlazorServerLession1.Services
 {
     public class CustomerService
     {
-        private static readonly List<Customer> customers = new()
-        {
-            // Initialize with some dummy data
-            new Customer { Id = 1, Name = "John Doe", Email = "john@example.com" },
-            // Add more customers as needed
-        };
+        
 
         public IEnumerable<Customer> GetAllCustomers()
         {
-            return customers;
+            return CustomerData.customers;
         }
 
         public Customer GetCustomerById(int id)
         {
-            return customers.FirstOrDefault(c => c.Id == id) ?? new Customer();
+            return CustomerData.customers.FirstOrDefault(c => c.Id == id) ?? new Customer();
         }
 
         //public void AddCustomer(Customer customer)
         //{
         //    if (customers.Any())
         //    {
-        //        customer.Id = customers.Max(c => c.Id) + 1;
+        //        customer.Id = CustomerData.customers.Max(c => c.Id) + 1;
         //    }
         //    else
         //    {
         //        customer.Id = 1;
         //    }
-        //    customers.Add(customer);
+        //    CustomerData.customers.Add(customer);
         //}
 
         public string AddCustomer(Customer customer)
@@ -43,8 +39,8 @@ namespace BlazorServerLession1.Services
             }
 
             // Assign the new customer ID as latest ID + 1
-            customer.Id = customers.Any() ? customers.Max(c => c.Id) + 1 : 1;
-            customers.Add(customer);
+            customer.Id = CustomerData.customers.Any() ? CustomerData.customers.Max(c => c.Id) + 1 : 1;
+            CustomerData.customers.Add(customer);
 
             return "Customer added successfully."; // Return a success message
         }
@@ -52,18 +48,18 @@ namespace BlazorServerLession1.Services
 
         //public void UpdateCustomer(Customer customer)
         //{
-        //    var existingCustomer = customers.FirstOrDefault(c => c.Id == customer.Id);
+        //    var existingCustomer = CustomerData.customers.FirstOrDefault(c => c.Id == customer.Id);
         //    if (existingCustomer != null)
         //    {
-        //        existingCustomer.Name = customer.Name;
-        //        existingCustomer.Email = customer.Email;
+        //        existingCustomer.Name = CustomerData.customers.Name;
+        //        existingCustomer.Email = CustomerData.customers.Email;
         //        // Update other fields as necessary
         //    }
         //}
 
         public string UpdateCustomer(Customer customer)
         {
-            var existingCustomer = customers.FirstOrDefault(c => c.Id == customer.Id);
+            var existingCustomer = CustomerData.customers.FirstOrDefault(c => c.Id == customer.Id);
             if (existingCustomer == null)
             {
                 return "Customer not found."; // Indicate if the customer wasn't found
@@ -85,10 +81,10 @@ namespace BlazorServerLession1.Services
 
         public void DeleteCustomer(int id)
         {
-            var customer = customers.FirstOrDefault(c => c.Id == id);
+            var customer = CustomerData.customers.FirstOrDefault(c => c.Id == id);
             if (customer != null)
             {
-                customers.Remove(customer);
+                CustomerData.customers.Remove(customer);
             }
         }
     }
